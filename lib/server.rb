@@ -24,6 +24,7 @@ loop do
   puts request_lines
   response = ''
   # Generate the Response
+
   if request_lines.first == 'GET / HTTP/1.1'
     puts "Sending response."
     output = "<html>Hello from the Server side!</html>"
@@ -65,6 +66,52 @@ loop do
     puts 'Sending Response'
     output = "<html>destroying a dog!</html>"
     status = "http/1.1 401 ok"
+    response = status + "\r\n" + "\r\n" + output
+  end
+
+  if request_lines.first.include? 'GET /game'
+    if request_lines.first.include?('?')
+      guess = request_lines.first.chomp(' HTTP/1.1').partition('?guess=').last.to_i
+      puts "Sending response."
+      if guess < 60
+        output = "<html>too low</html>"
+      end
+      status = "http/1.1 200 ok"
+      response = status + "\r\n" + "\r\n" + output
+    else
+      puts "Sending response."
+      output = "<html>I've generated a random number between 1 and 100. Start guessing!</html>"
+      status = "http/1.1 200 ok"
+      response = status + "\r\n" + "\r\n" + output
+    end
+  end
+
+  if request_lines.first.include? 'POST /game'
+    body = connection.read(request_lines.last.split.last.to_i)
+    guess = body.split('=').last.to_i
+      if guess < 50
+        output = "<html>too low</html>"
+      elsif guess > 50
+        output = '<html>too high</html>'
+      else
+        output = '<html>correct!</html>'
+      end
+    status = "http/1.1 202 ok"
+    response = status + "\r\n" + "\r\n" + output
+  end
+
+  if request_lines.first.include? 'POST /game/answer'
+    binding.pry
+    body = connection.read(request_lines.last.split.last.to_i)
+    answer = body.split('=').last.to_i
+      if guess < 50
+        output = "<html>too low</html>"
+      elsif guess > 50
+        output = '<html>too high</html>'
+      else
+        output = '<html>correct!</html>'
+      end
+    status = "http/1.1 202 ok"
     response = status + "\r\n" + "\r\n" + output
   end
 

@@ -5,6 +5,7 @@ require 'pry'
 
 class GuessingGameTest < Minitest::Test
   def test_it_has_instructions
+    skip
     response = Faraday.get 'http://localhost:9292/game'
     assert response.body.include? "I've generated a random number between 1 and 100. Start guessing!"
   end
@@ -17,7 +18,6 @@ class GuessingGameTest < Minitest::Test
 
   def test_it_guess_with_form_data
     # Stuck on this one? Look at the "Reading the Request Body" section of the README
-
     url = 'http://localhost:9292/game'
     response = Faraday.post(url, guess: 50)
     expected = response.body.include?('too high') || response.body.include?('too low') || response.body.include?('correct!')
@@ -34,6 +34,7 @@ class GuessingGameTest < Minitest::Test
   end
 
   def test_it_can_cheat
+    skip
     url = 'http://localhost:9292/game/answer'
     Faraday.post(url, answer: 50)
     response = Faraday.get 'http://localhost:9292/game/answer'
@@ -45,6 +46,7 @@ class GuessingGameTest < Minitest::Test
   end
 
   def test_it_can_start_a_new_game
+    skip
     response = Faraday.delete 'http://localhost:9292/game'
     assert response.body.include? "A new answer has been generated"
   end
